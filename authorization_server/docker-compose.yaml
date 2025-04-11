@@ -1,0 +1,67 @@
+services:
+  keycloak_postgres:
+    container_name: "keycloak_postgres"
+    image: "postgres:17-alpine"
+    hostname: "keycloak_postgres"
+    restart: "unless-stopped"
+    expose:
+      - 5432
+    ports:
+      - 0.0.0.0:5432:5432
+    environment:
+      POSTGRES_DB: $KEYCLOAK_POSTGRES_DB
+      POSTGRES_USER: $KEYCLOAK_POSTGRES_USER
+      POSTGRES_PASSWORD: $KEYCLOAK_POSTGRES_PASSWORD
+    volumes:
+      - keycloak_postgres.data:/var/lib/postgresql/users:rw
+    networks:
+      - keycloak_postgres.network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 50s
+      retries: 10
+      start_period: 5s
+
+  keycloak:
+    container_name: "auth_service.keycloak"
+    hostname: "auth_service.keycloak"
+    restart: "unless-stopped"
+    build:
+      context: .
+    expose:
+      - 8080
+    ports:
+      - 127.0.0.1:${API_PORT:-8080}:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: $KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME
+      KC_BOOTSTRAP_ADMIN_PASSWORD: $KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD
+      KC_HOSTNAME: $KEYCLOAK_HOSTNAME
+      KC_DB: "postgres"
+      KC_DB_ADDR: "keycloak_postgres"
+      KC_DB_PORT: 5432
+      KC_DB_URL: jdbc:postgresql://$${KC_DB_ADDR}:$${KC_DB_PORT}/$KEYCLOAK_POSTGRES_DB?characterEncoding=UTF-8
+      KC_DB_USERNAME: $KEYCLOAK_POSTGRES_USER
+      KC_DB_PASSWORD: $KEYCLOAK_POSTGRES_PASSWORD
+      KC_LOG_CONSOLE_COLOR: $KEYCLOAK_LOG_CONSOLE_COLOR
+      KC_LOG_LEVEL: $KEYCLOAK_LOG_LEVEL
+      KC_FEATURES: $KEYCLOAK_FEATURES
+    env_file:
+      - .env
+    volumes:
+      - keycloak.data:/opt/keycloak/data:rw
+    networks:
+      - keycloak_postgres.network
+      - keycloak.network
+    depends_on:
+      keycloak_postgres:
+        condition: service_healthy
+    command: '$KEYCLOAK_COMMAND'
+
+volumes:
+  keycloak_postgres.data: {}
+  keycloak.data: {}
+
+networks:
+  keycloak_postgres.network: {}
+  keycloak.network: {}

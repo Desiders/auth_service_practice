@@ -1,0 +1,7 @@
+host := `uname -a`
+
+help:
+    just -l
+
+run:
+    docker compose -p authorization_server up --build
