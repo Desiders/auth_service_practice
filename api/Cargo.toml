@@ -1,0 +1,33 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.8"
+axum-extra = { version = "0.10", features = ["typed-header"] }
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] } 
+serde = { version = "1.0", features = ["derive"] }
+serde_path_to_error = "0.1"
+serde_json = "1.0"
+toml = "0.8"
+anyhow = "1.0"
+thiserror = "2.0"
+either = "1.13"
+async-trait = "0.1"
+openidconnect = { git = "https://github.com/Desiders/openidconnect-rs", branch = "add-user-info-verifier-method" }
+utoipa = { version = "5.3", features = ["axum_extras"] }
+utoipa-axum = "0.2"
+utoipa-rapidoc = { version = "6", features = ["axum"] }
+serde_with = "3.12"
+
+[profile.dev]
+# Disabling debug info speeds up builds a bunch and we don't rely on it for debugging that much.
+debug = 0
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1

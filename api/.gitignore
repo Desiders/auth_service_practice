@@ -1,0 +1,7 @@
+/target
+
+configs/dev.toml
+configs/prod.toml
+configs/test.toml
+
+.env
