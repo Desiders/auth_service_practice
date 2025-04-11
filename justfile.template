@@ -1,0 +1,21 @@
+set export
+
+host := `uname -a`
+
+help:
+    just -l
+
+sish:
+    ssh -R keycloak-auth-service:80:localhost:8080 -R api-auth-service:80:localhost:80 tunnel.touhou.dad
+
+authorization_server:
+    just --working-directory ./authorization_server --justfile ./authorization_server/justfile run
+
+reverse_proxy:
+    sudo just --working-directory ./reverse_proxy --justfile ./reverse_proxy/justfile run-dev
+
+authorization_proxy:
+    just --working-directory ./authorization_proxy --justfile ./authorization_proxy/justfile run
+
+api:
+    just --working-directory ./api --justfile ./api/justfile run-dev
