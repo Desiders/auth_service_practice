@@ -1,0 +1,14 @@
+services:
+  oauth2_proxy:
+    container_name: "oauth2_proxy"
+    image: "quay.io/oauth2-proxy/oauth2-proxy:latest"
+    hostname: "oauth2_proxy"
+    expose:
+      - 4180
+    ports:
+      - "127.0.0.1:${API_PORT:-4180}:4180"
+    volumes:
+      - "./oauth2-proxy.cfg:/etc/oauth2-proxy/oauth2-proxy.cfg:ro"
+    environment:
+      OAUTH2_PROXY_PASS_HOST_HEADER: false
+    command: "--config=/etc/oauth2-proxy/oauth2-proxy.cfg"
