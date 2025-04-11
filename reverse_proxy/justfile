@@ -1,0 +1,7 @@
+host := `uname -a`
+
+help:
+    just -l
+
+run-dev:
+    nginx -p . -c ./nginx.conf -g 'daemon off;'

@@ -1,0 +1,51 @@
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    proxy_buffer_size 8k;
+    proxy_buffers 4 8k;
+    proxy_busy_buffers_size 16k;
+
+    client_header_buffer_size 16k;
+    large_client_header_buffers 4 16k;
+
+    access_log /dev/stdout;
+    error_log /dev/stderr;
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        location /oauth2/ {
+            proxy_pass       http://127.0.0.1:4180;
+            proxy_set_header Host                    $host;
+            proxy_set_header X-Real-IP               $remote_addr;
+            proxy_set_header X-Auth-Request-Redirect $request_uri;
+        }
+        location = /oauth2/auth {
+            proxy_pass       http://127.0.0.1:4180;
+            proxy_set_header Host             $host;
+            proxy_set_header X-Real-IP        $remote_addr;
+            proxy_set_header X-Forwarded-Uri  $request_uri;
+            proxy_set_header Content-Length   "";
+            proxy_pass_request_body           off;
+        }
+
+        location / {
+            auth_request /oauth2/auth;
+            error_page 401 =403 @auth_redirect;
+
+            auth_request_set $authorization  $upstream_http_authorization;
+            proxy_set_header Authorization $authorization;
+
+            proxy_pass http://127.0.0.1:3000/;
+        }
+
+        location @auth_redirect {
+            return 302 $scheme://$http_host/oauth2/start?rd=$uri;
+        }
+    }
+}
