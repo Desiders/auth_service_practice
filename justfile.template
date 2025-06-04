@@ -11,11 +11,20 @@ sish:
 authorization_server:
     just --working-directory ./authorization_server --justfile ./authorization_server/justfile run
 
-reverse_proxy:
+reverse_proxy_dev:
     sudo just --working-directory ./reverse_proxy --justfile ./reverse_proxy/justfile run-dev
+
+reverse_proxy:
+    just --working-directory ./reverse_proxy --justfile ./reverse_proxy/justfile run
 
 authorization_proxy:
     just --working-directory ./authorization_proxy --justfile ./authorization_proxy/justfile run
 
-api:
+api_dev:
     just --working-directory ./api --justfile ./api/justfile run-dev
+
+api:
+    just --working-directory ./api --justfile ./api/justfile run-docker
+
+network_create:
+    docker network create auth_service.network

@@ -12,9 +12,7 @@ request_logging_format = "{{.Client}} - {{.Username}} [{{.Timestamp}}] {{.Host}}
 auth_logging = true
 auth_logging_format = "{{.Client}} - {{.Username}} [{{.Timestamp}}] [{{.Status}}] {{.Message}}"
 
-pass_basic_auth = true
-pass_user_headers = true
-pass_host_header = true
+set_authorization_header = true
 
 email_domains = "*"
 
@@ -30,14 +28,12 @@ code_challenge_method = "S256"
 
 scope = "openid email profile"
 
-pass_access_token = false
-
 ssl_insecure_skip_verify = false
 
 cookie_name = "_oauth2_proxy"
-cookie_secret = "..."
+cookie_secret = "...="
 cookie_secure = false
 cookie_httponly = true
 cookie_expire = "168h"
-cookie_samesite= "lax"
+cookie_samesite = "strict"
 cookie_csrf_per_request = true
