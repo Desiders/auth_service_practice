@@ -5,3 +5,6 @@ help:
 
 run-dev:
     nginx -p . -c ./nginx.conf -g 'daemon off;'
+
+run:
+    docker compose -p reverse_proxy up --build
