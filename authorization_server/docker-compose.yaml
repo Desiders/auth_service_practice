@@ -52,7 +52,7 @@ services:
       - keycloak.data:/opt/keycloak/data:rw
     networks:
       - keycloak_postgres.network
-      - keycloak.network
+      - auth_service.network
     depends_on:
       keycloak_postgres:
         condition: service_healthy
@@ -64,4 +64,5 @@ volumes:
 
 networks:
   keycloak_postgres.network: {}
-  keycloak.network: {}
+  auth_service.network:
+    external: true
