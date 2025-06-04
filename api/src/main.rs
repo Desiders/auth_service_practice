@@ -4,7 +4,7 @@ pub mod config;
 pub mod domain;
 pub mod presentation;
 
-use axum::{routing::get, Router};
+use axum::{response::Redirect, routing::get, Router};
 use config::{Config, IdentityProviderConfig, LoggingConfig, ServeConfig};
 use domain::openid::OpenIdClientEntity;
 use openidconnect::{
@@ -64,6 +64,7 @@ async fn main() -> Result<(), anyhow::Error> {
     #[rustfmt::skip]
     let router = Router::new()
         .route("/ping", get(root::ping))
+        .route("/", get(|| async { Redirect::permanent("/docs") }))
         .merge(RapiDoc::with_openapi("/api-docs/openapi.json", ApiDoc::openapi()).path("/docs"));
 
     let app = router.with_state(app_state);
