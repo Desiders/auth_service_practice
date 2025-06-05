@@ -1,0 +1,18 @@
+services:
+  nginx:
+    container_name: "nginx"
+    image: "nginx:latest"
+    hostname: "nginx"
+    restart: "unless-stopped"
+    expose:
+      - 80
+    ports:
+      - "127.0.0.1:$HTTP_PORT:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - auth_service.network
+
+networks:
+  auth_service.network:
+    external: true

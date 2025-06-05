@@ -37,3 +37,6 @@ test:
 
 @run-prod-release CONFIG_PATH='./configs/prod.toml':
     just run-release
+
+@run-docker:
+    docker compose -p authorization_api up --build

@@ -9,6 +9,12 @@ services:
       - "127.0.0.1:${API_PORT:-4180}:4180"
     volumes:
       - "./oauth2-proxy.cfg:/etc/oauth2-proxy/oauth2-proxy.cfg:ro"
+    networks:
+      - auth_service.network
     environment:
       OAUTH2_PROXY_PASS_HOST_HEADER: false
     command: "--config=/etc/oauth2-proxy/oauth2-proxy.cfg"
+
+networks:
+  auth_service.network:
+    external: true
